@@ -24,20 +24,32 @@ router.post('/', async (req, res) => {
 
     // If a category exists, create a deck in that category
     if (categoryCheck) {
-      categoryCheck.decks.push({
+
+        categoryCheck.decks.push({
         deckName: req.body.deckName,
         cards: [],
       });
 
-      await categoryCheck.save();
-
       const cardsInput = req.body.cards;
 
-      console.log("this is console for: ",categoryCheck.decks.cards[0])
+    //   console.log("this is console for: ",cardsInput)
+
+    //    const cardSpot = categoryCheck.decks.cards
       
-      cardsInput.forEach((element, idx) => {
-          categoryCheck.decks.cards.push(element);
+      const deckName = req.body.deckName
+      let deck = categoryCheck.decks.indexOf(deckName)
+
+
+        cardsInput.forEach((element) => {
+          console.log(element)
+          console.log(categoryCheck.decks)
+            categoryCheck.decks[deck].cards.push(element)
+          
         });
+     
+    //    for(let i = 0; i < cardsInput.length;i++){
+
+    //    }
         
         
         await newCategory.save();
@@ -59,9 +71,13 @@ router.post('/', async (req, res) => {
 
       
       const cardsInput = req.body.cards;
+
+      let deckIndex = newCategory.decks.indexOf(req.body.deckName)
+
+      console.log(deckIndex)
       
-      cards.forEach((element, idx) => {
-          newCategory.decks.cards.push(element);
+      cardsInput.forEach((element, idx) => {
+          newCategory.decks[deckIndex].cards.push(element);
         });
         
         
