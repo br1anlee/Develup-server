@@ -24,41 +24,35 @@ router.post('/', async (req, res) => {
 
     // If a category exists, create a deck in that category
     if (categoryCheck) {
-
-        categoryCheck.decks.push({
+      categoryCheck.decks.push({
         deckName: req.body.deckName,
         cards: [],
       });
 
       const cardsInput = req.body.cards;
 
-    //   console.log("this is console for: ",cardsInput)
+      //   console.log("this is console for: ",cardsInput)
 
-    //    const cardSpot = categoryCheck.decks.cards
-      
-      const deckName = req.body.deckName
-      let deck = categoryCheck.decks.indexOf(deckName)
+      //    const cardSpot = categoryCheck.decks.cards
 
+      const deckName = req.body.deckName;
+      let deck = categoryCheck.decks.indexOf(deckName);
 
-        cardsInput.forEach((element) => {
-          console.log(element)
-          console.log(categoryCheck.decks)
-            categoryCheck.decks[deck].cards.push(element)
-          
-        });
-     
-    //    for(let i = 0; i < cardsInput.length;i++){
+      cardsInput.forEach((element) => {
+        console.log(element);
+        console.log(categoryCheck.decks);
+        categoryCheck.decks[deck].cards.push(element);
+      });
 
-    //    }
-        
-        
-        await newCategory.save();
-        res.json({ categoryCheck });
+      //    for(let i = 0; i < cardsInput.length;i++){
+
+      //    }
+
+      await newCategory.save();
+      res.json({ categoryCheck });
 
       // if a category doesn't exist
     } else {
-
-
       const newCategory = await db.Category.create({
         name: req.body.name,
         decks: [],
@@ -69,23 +63,28 @@ router.post('/', async (req, res) => {
         cards: [],
       });
 
-      
-      const cardsInput = req.body.cards;
-
-      let deckIndex = newCategory.decks.indexOf(req.body.deckName)
-
-      console.log(deckIndex)
-      
-      cardsInput.forEach((element, idx) => {
-          newCategory.decks[deckIndex].cards.push(element);
-        });
-        
-        
       await newCategory.save();
 
+      const cardsInput = req.body.cards;
 
+      let deckIdx = newCategory.decks.findIndex((object) => {
+        return object.deckName === req.body.deckName;
+      });
 
+      cardsInput.forEach((element) => {
+        newCategory.decks[deckIdx].cards.push(element);
+      });
 
+      console.log(newCategory);
+
+      //   cardsInput.forEach((elememt,index)=>{
+
+      //   })
+
+      //   console.log(newCategory.decks[0].cards[0])
+
+      await newCategory.save();
+      res.json({ newCategory });
     }
 
     //   {
