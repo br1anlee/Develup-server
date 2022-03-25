@@ -16,7 +16,7 @@ const cardSchema = mongoose.Schema({
 const deckSchema = mongoose.Schema({
   deckName: {
     type: String,
-    minLength: 5,
+    minLength: 3,
     required: true,
   },
   author: String,
