@@ -1,5 +1,5 @@
-require('./models')
 require('dotenv').config()
+require('./models')
 const express = require('express')
 const cors = require('cors')
 
@@ -24,5 +24,6 @@ app.get('/', (req, res) => {
 
 // controllers
 app.use('/api-v1/users', require('./controllers/api-v1/users'))
+app.use('/api-v1/category', require('./controllers/api-v1/category'))
 
 app.listen(PORT, () => console.log(`listening to the smooth sounds of port ${PORT} in the morning 🌊`))

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1/mernAuthLesson'
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/develUp'
 
 mongoose.connect(MONGODB_URI)
 
@@ -14,3 +14,4 @@ db.on('error', err => {
 })
 
 module.exports.User = require('./user')
+module.exports.Category = require('./category')
