@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   res.json(allCategories);
 });
 
-// POST - create a new category
+// POST - create a new deck and cards (may include category)
 router.post('/', async (req, res) => {
   try {
     // Check if a category exists
@@ -77,7 +77,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Delete a category
+// DELETE - Delete a category
 router.delete('/:id', async (req, res) => {
   try{
     const deletedCategory = await db.Category.findByIdAndDelete({
@@ -90,7 +90,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-//Delete a deck
+//DELETE - Delete a deck
 router.delete('/:categoryId/deck/:deckId', async (req, res)=>{
 
   const deckId = req.params.deckId
@@ -112,6 +112,35 @@ res.json({category})
   console.log(err)
 }
 
+
+})
+
+//PUT - update a deck
+router.put('/:categoryId/deck/:deckId', async (req, res)=>{
+  const deckId = req.params.deckId
+  const categoryId = req.params.categoryId
+
+  const category = await db.Category.findById({
+    _id:categoryId
+  })
+
+  let deckIdx = category.decks.findIndex((object) => {
+    return object.id === deckId;
+  });
+
+  try{
+
+    category.decks[deckIdx].deckName = req.body.deckName
+
+    await category.save()
+
+    res.json({category})
+
+
+
+  }catch(err){
+    console.log(err)
+  }
 
 })
 
