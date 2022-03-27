@@ -77,21 +77,42 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Delete a deck
+// Delete a category
 router.delete('/:id', async (req, res) => {
-
-
-  
-
-
-
-  const deletedCategory = await db.Category.findByIdAndDelete({
-    _id: req.params.id,
-  });
-
-  const allCategories = await db.Category.find({});
-
-  res.json(allCategories);
+  try{
+    const deletedCategory = await db.Category.findByIdAndDelete({
+      _id: req.params.id,
+    });
+    const allCategories = await db.Category.find({});
+    res.json(allCategories);
+  }catch(err){
+    console.log(err)
+  }
 });
+
+//Delete a deck
+router.delete('/:categoryId/deck/:deckId', async (req, res)=>{
+
+  const deckId = req.params.deckId
+  const categoryId = req.params.categoryId
+
+  const category = await db.Category.findById({
+    _id:categoryId
+  })
+
+try{
+
+ category.decks.id(deckId).remove()
+  await category.save()
+
+
+res.json({category})
+ 
+}catch(err){
+  console.log(err)
+}
+
+
+})
 
 module.exports = router;
