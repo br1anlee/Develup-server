@@ -81,5 +81,4 @@ router.get('/auth-locked', requiresToken, (req, res) => {
   res.json({ msg: 'welcome to the auth locked route, congrats on geting thru the middleware 🎉' })
 })
 
-
 module.exports = router

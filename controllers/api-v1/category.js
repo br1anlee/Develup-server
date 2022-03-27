@@ -98,10 +98,19 @@ router.delete("/:categoryId/deck/:deckId", async (req, res) => {
   const category = await db.Category.findById({
     _id: categoryId,
   });
-
+  const allCategories = await db.Category.find({});
   try {
     category.decks.id(deckId).remove();
     await category.save();
+
+    console.log(category)
+
+    if(category.decks.length === 0){
+      category.remove()
+      await category.save()
+      res.json(allCategories)
+      return
+    }
 
     res.json({ category });
   } catch (err) {
