@@ -1,10 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const db = require("../../models");
-const requiresToken = require("../requiresToken");
-const user = require("../../models/user");
 
 // GET - View all categories
 router.get("/", async (req, res) => {
@@ -23,6 +19,20 @@ router.post("/", async (req, res) => {
 
     // If a category exists, create a new deck and new cards
     if (categoryCheck) {
+
+      // console.log(categoryCheck.decks)
+      const deckNameCheck = categoryCheck.decks.find((elem) => {
+        return elem.deckName === req.body.deckName;
+      });
+      // console.log(deckNameCheck)
+      if (deckNameCheck) {
+        res
+          .status(409)
+          .json({
+            msg: 'That deck name is already in use, please choose another',
+          });
+      } else {
+
       categoryCheck.decks.push({
         deckName: req.body.deckName,
         cards: [],
@@ -42,6 +52,7 @@ router.post("/", async (req, res) => {
 
       await categoryCheck.save();
       res.json({ categoryCheck });
+    }
 
       // if a category doesn't exist, create a new category, new deck and new cards
     } else {
