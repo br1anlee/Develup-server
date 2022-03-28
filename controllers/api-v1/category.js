@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   res.json(allCategories);
 });
 
-// POST /users/register -- CREATE a new user
+
 router.post('/', async (req, res) => {
   try {
     // Check if a category exists
@@ -47,31 +47,6 @@ router.post('/', async (req, res) => {
         await categoryCheck.save();
         res.json({ categoryCheck });
 
-
-        //   cardsInput.forEach((element) => {
-        //     newCategory.decks[deckIdx].cards.push(element);
-        //   });
-
-      //   console.log("this is console for: ",cardsInput)
-
-      //    const cardSpot = categoryCheck.decks.cards
-
-      //   const deckName = req.body.deckName;
-      //   let deck = categoryCheck.decks.indexOf(deckName);
-
-      //   cardsInput.forEach((element) => {
-      //     console.log(element);
-      //     console.log(categoryCheck.decks);
-      //     categoryCheck.decks[deck].cards.push(element);
-      //   });
-
-      //   //    for(let i = 0; i < cardsInput.length;i++){
-
-      //   //    }
-
-      //   await newCategory.save();
-      //   res.json({ categoryCheck });
-
       // if a category doesn't exist
     } else {
       const newCategory = await db.Category.create({
@@ -98,28 +73,11 @@ router.post('/', async (req, res) => {
 
       console.log(newCategory);
 
-      //   cardsInput.forEach((elememt,index)=>{
-
-      //   })
-
-      //   console.log(newCategory.decks[0].cards[0])
 
       await newCategory.save();
       res.json({ newCategory });
     }
 
-    //   {
-    //     name:categoryName,
-    //     decks: {
-    //         name: deckName,
-    //         cards: []
-    //     }
-    // }
-
-    //   const newCards = await db.Category.newCategory.newDeck.cards.create({
-    //     question: re
-
-    //   })
   } catch (err) {
     console.log(err);
     res.status(503).json({ msg: 'oops server error 503 🔥😭' });
