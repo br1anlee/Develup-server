@@ -1,16 +1,17 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const db = require("../../models");
 
+
 // GET - View all categories
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   const allCategories = await db.Category.find({});
 
   res.json(allCategories);
 });
 
 // POST - create a new deck and cards (may include category)
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Check if a category exists
     const categoryCheck = await db.Category.findOne({
@@ -38,21 +39,32 @@ router.post("/", async (req, res) => {
         cards: [],
       });
 
-      await categoryCheck.save();
+      console.log(deckNameCheck)
 
-      const cardsInput = req.body.cards;
+      if (deckNameCheck) {
+        res
+          .status(409)
+          .json({
+            msg: 'That deck name is already in use, please choose another',
+          });
+      } else {
+        categoryCheck.decks.push({
+          deckName: req.body.deckName,
+          cards: [],
+        });
 
-      let deckIdx = categoryCheck.decks.findIndex((object) => {
-        return object.deckName === req.body.deckName;
-      });
+        await categoryCheck.save();
 
-      cardsInput.forEach((element) => {
-        categoryCheck.decks[deckIdx].cards.push(element);
-      });
+        const cardsInput = req.body.cards;
+
+        let deckIdx = categoryCheck.decks.findIndex((object) => {
+          return object.deckName === req.body.deckName;
+        });
 
       await categoryCheck.save();
       res.json({ categoryCheck });
     }
+
 
       // if a category doesn't exist, create a new category, new deck and new cards
     } else {
@@ -84,12 +96,12 @@ router.post("/", async (req, res) => {
     // Log an error to the server's console if there is an issue creating anything
   } catch (err) {
     console.log(err);
-    res.status(503).json({ msg: "server error 503 🔥😭" });
+    res.status(503).json({ msg: 'server error 503 🔥😭' });
   }
 });
 
 // DELETE - Delete a category
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedCategory = await db.Category.findByIdAndDelete({
       _id: req.params.id,
@@ -102,7 +114,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 //DELETE - Delete a deck
-router.delete("/:categoryId/deck/:deckId", async (req, res) => {
+router.delete('/:categoryId/deck/:deckId', async (req, res) => {
   const deckId = req.params.deckId;
   const categoryId = req.params.categoryId;
 
@@ -114,13 +126,13 @@ router.delete("/:categoryId/deck/:deckId", async (req, res) => {
     category.decks.id(deckId).remove();
     await category.save();
 
-    console.log(category)
+    console.log(category);
 
-    if(category.decks.length === 0){
-      category.remove()
-      await category.save()
-      res.json(allCategories)
-      return
+    if (category.decks.length === 0) {
+      category.remove();
+      await category.save();
+      res.json(allCategories);
+      return;
     }
 
     res.json({ category });
@@ -130,7 +142,7 @@ router.delete("/:categoryId/deck/:deckId", async (req, res) => {
 });
 
 //PUT - update a deck and cards
-router.put("/:categoryId/deck/:deckId", async (req, res) => {
+router.put('/:categoryId/deck/:deckId', async (req, res) => {
   const deckId = req.params.deckId;
   const categoryId = req.params.categoryId;
 
@@ -147,7 +159,6 @@ router.put("/:categoryId/deck/:deckId", async (req, res) => {
     category.decks[deckIdx].cards = req.body.cards;
 
     await category.save();
-
 
     res.json({ category });
   } catch (err) {
