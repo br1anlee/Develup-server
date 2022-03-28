@@ -1,19 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const db = require('../../models');
-const requiresToken = require('../requiresToken');
-const user = require('../../models/user');
 
-// GET /
-
+// GET - View all categories
 router.get('/', async (req, res) => {
   const allCategories = await db.Category.find({});
 
   res.json(allCategories);
 });
-
 
 router.post('/', async (req, res) => {
   try {
@@ -22,30 +16,41 @@ router.post('/', async (req, res) => {
       name: req.body.name,
     });
 
-    // If a category exists, create a deck in that category
+    // If a category exists, create a new deck and new cards
     if (categoryCheck) {
-
-      categoryCheck.decks.push({
-        deckName: req.body.deckName,
-        cards: [],
+      const deckNameCheck = categoryCheck.decks.find((elem) => {
+        return elem.deckName === req.body.deckName;
       });
 
-      await categoryCheck.save();
+      console.log(deckNameCheck)
 
-      const cardsInput = req.body.cards;
+      if (deckNameCheck) {
+        res
+          .status(409)
+          .json({
+            msg: 'That deck name is already in use, please choose another',
+          });
+      } else {
+        categoryCheck.decks.push({
+          deckName: req.body.deckName,
+          cards: [],
+        });
 
-    //   let deckIdx = categoryCheck.decks.indexOf(req.body.deckName);
-    let deckIdx = categoryCheck.decks.findIndex((object) => {
-        return object.deckName === req.body.deckName;
-      });
+        await categoryCheck.save();
 
+        const cardsInput = req.body.cards;
 
-      cardsInput.forEach((element) => {
-        categoryCheck.decks[deckIdx].cards.push(element);
-      });
-      
+        let deckIdx = categoryCheck.decks.findIndex((object) => {
+          return object.deckName === req.body.deckName;
+        });
+
+        cardsInput.forEach((element) => {
+          categoryCheck.decks[deckIdx].cards.push(element);
+        });
+
         await categoryCheck.save();
         res.json({ categoryCheck });
+      }
 
       // if a category doesn't exist
     } else {
@@ -80,18 +85,74 @@ router.post('/', async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.status(503).json({ msg: 'oops server error 503 🔥😭' });
+    res.status(503).json({ msg: 'server error 503 🔥😭' });
   }
 });
 
+// DELETE - Delete a category
 router.delete('/:id', async (req, res) => {
-  const deletedCategory = await db.Category.findByIdAndDelete({
-    _id: req.params.id,
+  try {
+    const deletedCategory = await db.Category.findByIdAndDelete({
+      _id: req.params.id,
+    });
+    const allCategories = await db.Category.find({});
+    res.json(allCategories);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//DELETE - Delete a deck
+router.delete('/:categoryId/deck/:deckId', async (req, res) => {
+  const deckId = req.params.deckId;
+  const categoryId = req.params.categoryId;
+
+  const category = await db.Category.findById({
+    _id: categoryId,
+  });
+  const allCategories = await db.Category.find({});
+  try {
+    category.decks.id(deckId).remove();
+    await category.save();
+
+    console.log(category);
+
+    if (category.decks.length === 0) {
+      category.remove();
+      await category.save();
+      res.json(allCategories);
+      return;
+    }
+
+    res.json({ category });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//PUT - update a deck and cards
+router.put('/:categoryId/deck/:deckId', async (req, res) => {
+  const deckId = req.params.deckId;
+  const categoryId = req.params.categoryId;
+
+  const category = await db.Category.findById({
+    _id: categoryId,
   });
 
-  const allCategories = await db.Category.find({});
+  let deckIdx = category.decks.findIndex((object) => {
+    return object.id === deckId;
+  });
 
-  res.json(allCategories);
+  try {
+    category.decks[deckIdx].deckName = req.body.deckName;
+    category.decks[deckIdx].cards = req.body.cards;
+
+    await category.save();
+
+    res.json({ category });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = router;
