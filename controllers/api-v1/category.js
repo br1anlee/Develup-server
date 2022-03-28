@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const db = require('../../models');
-const requiresToken = require('../requiresToken');
-const user = require('../../models/user');
 
 // GET - View all categories
 router.get('/', async (req, res) => {
