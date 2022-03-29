@@ -12,6 +12,18 @@ router.get('/', async (req, res) => {
   res.json(foundUser)
 })
 
+// GET specific  user
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const foundUser = await db.User.findById(id)
+    res.status(202).json(foundUser)
+  } catch (err) {
+    console.log(err)
+    res.status(503).json({ message: "Something aint right here" })
+  }
+})
+
 // PUT update a user
 router.put('/:id', async (req, res) => {
   try {
