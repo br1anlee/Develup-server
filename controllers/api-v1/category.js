@@ -5,9 +5,17 @@ const db = require('../../models');
 // GET - View all categories
 router.get('/', async (req, res) => {
   const allCategories = await db.Category.find({});
-
   res.json(allCategories);
 });
+
+// Add a route router.get'/':id (find id by id (req.id))
+// router.get('/:id', async (req, res) => {
+//   const allDecks = await db.Category.findById({
+//     id: req.params.id
+//   })
+
+//   res.json(allDecks)
+// })
 
 router.post('/', async (req, res) => {
   try {
