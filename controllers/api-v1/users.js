@@ -6,6 +6,40 @@ const db = require('../../models')
 const requiresToken = require('../requiresToken')
 const user = require('../../models/user')
 
+// GET Show all users
+router.get('/', async (req, res) => {
+  const foundUser = await db.User.find({})
+  res.json(foundUser)
+})
+
+// GET specific  user
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const foundUser = await db.User.findById(id)
+    res.status(202).json(foundUser)
+  } catch (err) {
+    console.log(err)
+    res.status(503).json({ message: "Something aint right here" })
+  }
+})
+
+// PUT update a user
+router.put('/:id', async (req, res) => {
+  try {
+    const editUser = await db.User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new: true}
+    )
+    const foundUsers = await db.User.find({})
+    res.json(foundUsers)
+  } catch (err) {
+    console.log(err)
+    res.status(503).json({ message: "the server is not going to do that" })
+  }
+})
+
 // POST /users/register -- CREATE a new user
 router.post('/register', async  (req, res) => {
   try {
