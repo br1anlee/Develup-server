@@ -18,11 +18,19 @@ router.post("/", uploads.single("image"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ msg: "no file uploaded" })
     const cloudImageData = await cloudinary.uploader.upload(req.file.path)
+    console.log(cloudImageData)
     console.log(cloudImageData.url)
-    const  cloudImage = `https://res.cloudinary.com/solful/image/upload/v1593119998/${cloudImageData.public_id}.png`
+
+    // const foundUser = res.locals.user
+
+    const  cloudImage = `https://res.cloudinary.com/solful/image/upload/c_thumb,g_face,h_200,w_200/${cloudImageData.public_id}.png`
+
+    // foundUser.avatar.push(cloudImageData.public_id)
+    // await foundUser.save()
 
     unlinkSync(req.file.path)
     res.json({ cloudImage })
+    // res.json({ msg: 'image posted' })
 
   } catch (err) {
     console.log(err)
