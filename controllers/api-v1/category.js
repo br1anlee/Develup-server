@@ -119,7 +119,7 @@ router.delete('/:categoryId/deck/:deckId', async (req, res) => {
 
     if (category.decks.length === 0) {
       category.remove();
-      await category.save();
+      // await category.save();
       res.json(allCategories);
       return;
     }
@@ -144,9 +144,14 @@ router.put('/:categoryId/deck/:deckId', async (req, res) => {
   });
 
   try {
-    category.decks[deckIdx].deckName = req.body.deckName;
-    category.decks[deckIdx].cards = req.body.cards;
+    if (req.body.deckName) {
+      category.decks[deckIdx].deckName = req.body.deckName;
+    }
 
+    if (req.body.cards) {
+      category.decks[deckIdx].cards = req.body.cards;
+    }
+    
     await category.save();
 
     res.json({ category });
