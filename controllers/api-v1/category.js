@@ -34,6 +34,7 @@ router.post('/', async (req, res) => {
       } else {
         categoryCheck.decks.push({
           deckName: req.body.deckName,
+          author: req.body.author,
           cards: [],
         });
 
@@ -62,6 +63,7 @@ router.post('/', async (req, res) => {
 
       newCategory.decks.push({
         deckName: req.body.deckName,
+        author: req.body.author,
         cards: [],
       });
 
