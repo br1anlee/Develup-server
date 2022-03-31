@@ -9,6 +9,31 @@ router.get('/', async (req, res) => {
   res.json(allCategories);
 });
 
+// GET - view a single category
+router.get('/:categoryId', async (req, res) => {
+  try {
+    const categoryId = req.params.categoryId;
+    const oneDeck = await db.Category.findById({_id: categoryId})
+    res.status(202).json(oneDeck)
+  } catch (err) {
+    console.log(err)
+    res.status(503).json({msg: "Something isn't right."})
+  }
+})
+
+//GET - View a single deck
+router.get('/:categoryId/deck/:deckId', async (req, res) => {
+  const deckId = req.params.deckId;
+  const categoryId = req.params.categoryId;
+
+  const category = await db.Category.findById({
+    _id: categoryId,
+  });
+    oneDeck = category.decks.id(deckId)
+    res.json(oneDeck)
+  });
+
+
 // POST - create a new deck and cards (may include category)
 router.post('/', async (req, res) => {
   try {
