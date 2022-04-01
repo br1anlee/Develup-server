@@ -21,10 +21,9 @@ router.post("/", uploads.single("image"), requiresToken, async (req, res) => {
     const cloudImageData = await cloudinary.uploader.upload(req.file.path)
     console.log(cloudImageData)
     console.log(cloudImageData.url)
-
     const foundUser = res.locals.user
 
-    // const  cloudImage = `https://res.cloudinary.com/solful/image/upload/c_thumb,g_face,h_200,w_200/${cloudImageData.public_id}.png`
+    const  cloudImage = `https://res.cloudinary.com/solful/image/upload/c_thumb,g_face,h_200,w_200/${cloudImageData.public_id}.png`
 
     foundUser.avatar = cloudImageData.public_id
     await foundUser.save()

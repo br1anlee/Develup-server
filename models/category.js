@@ -4,19 +4,19 @@ const cardSchema = mongoose.Schema({
   question: {
     type: String,
     required: true,
-    minLength: 5
+    minLength: 2
   },
   answer: {
     type: String,
     required: true,
-    minLength: 5
+    minLength: 3
   },
 });
 
 const deckSchema = mongoose.Schema({
   deckName: {
     type: String,
-    minLength: 3,
+    minLength: 2,
     required: true,
   },
   author: String,
@@ -26,7 +26,7 @@ const deckSchema = mongoose.Schema({
 const categorySchema = mongoose.Schema({
   name: {
     type: String,
-    minLength: 3,
+    minLength: 2,
     required: true,
   },
   decks: [deckSchema],
